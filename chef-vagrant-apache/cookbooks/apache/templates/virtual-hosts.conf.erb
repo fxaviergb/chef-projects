@@ -1,0 +1,26 @@
+# Configuración de un VirtualHost para Apache
+# Define un host virtual que escucha en el puerto 80 (HTTP).
+<VirtualHost *:80>
+  
+  # Dirección de correo electrónico del administrador del servidor
+  # Se usa en mensajes de error y notificaciones del servidor.
+  ServerAdmin webmaster@localhost
+  
+  # Directorio raíz del servidor web
+  # Este valor se obtiene dinámicamente de los atributos del nodo Chef.
+  DocumentRoot <%= node['apache']['document_root']%>
+
+  # Configuración del acceso al directorio raíz del servidor
+  # Define permisos de acceso para el directorio configurado como DocumentRoot.
+  <Directory <%= @node['apache']['document_root']%>>
+    # Permite el acceso a todos los usuarios.
+    Require all granted
+  </Directory>
+
+  # Configuración de los archivos de registro
+  # Archivo para errores del servidor.
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  
+  # Archivo para registrar accesos al servidor.
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
