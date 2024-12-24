@@ -42,6 +42,39 @@ To use this project, ensure your system meets the following requirements:
    vagrant ssh
    ```
 
+## Unit Tests
+
+### Location of Unit Tests
+- The unit tests are located in the `spec` directory under the cookbook `wordpress`:
+  ```
+  cookbooks/wordpress/spec/
+  ```
+- The primary test file is `default_spec.rb`.
+- The additional recipes are included in unit tests too: `configure_wordpress_spec.rb` and `install_wordpress_spec.rb`.
+
+### Running the Tests
+To run the unit tests, follow these steps:
+1. Ensure you have ChefDK or Chef Workstation installed.
+2. Navigate to the cookbook directory:
+   ```bash
+   cd cookbooks/wordpress
+   ```
+3. Run the tests using the following command:
+   ```bash
+   chef exec rspec spec
+   ```
+4. If the tests pass, you should see output indicating all examples succeeded:
+   ```
+   Finished in 0.1234 seconds
+   8 examples, 0 failures
+   ```
+
+### What the Tests Validate
+- The unit tests verify:
+  1. The `apache2`, `php` and `mysql-server` packages are installed.
+  2. The `wordpress` package is installed.
+  3. The bash commands to configure Wordpress are defined and configured correctly.
+
 ## Verifying the Setup
 
 1. **WordPress Access**
