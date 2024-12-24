@@ -2,9 +2,13 @@
 # Este recurso 'log' muestra información de la máquina virtual utilizando atributos recopilados por Ohai.
 log 'Showing machine Ohai attributes' do
   # Mensaje que incluye:
-  # - Total de memoria disponible en la máquina ('memory.total').
-  # - Número de procesadores disponibles ('cpu.total').
-  # - Dirección IP de la interfaz de red 'enp0s8', obtenida dinámicamente a través de Ohai.
-  message "Machine with #{node['memory']['total']} of memory and #{node['cpu']['total']} processor/s. \
-  \nPlease check access to http://#{node[:network][:interfaces][:enp0s8][:addresses].detect { |k, v| v[:family] == 'inet' }.first}"
+  memory_total = node.dig('memory', 'total') || 'unknown'
+  cpu_total = node.dig('cpu', 'total') || 'unknown'
+
+  # Verificar la existencia de la interfaz y obtener la dirección IP
+  ip_address = node.dig('network', 'interfaces', 'enp0s8', 'addresses')&.detect { |_k, v| v['family'] == 'inet' }&.first
+  ip_address ||= 'unavailable'
+
+  message "Machine with #{memory_total} of memory and #{cpu_total} processor/s. \
+  \nPlease check access to http://#{ip_address}"
 end
