@@ -1,16 +1,26 @@
-# Chef InSpec test for recipe apache::default
-
-# The Chef InSpec reference, with examples and extensive documentation, can be
-# found at https://docs.chef.io/inspec/resources/
-
-unless os.windows?
-  # This is an example test, replace with your own test.
-  describe user('root'), :skip do
-    it { should exist }
-  end
+directory node['vagrant_path'] do
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
 end
 
-# This is an example test, replace it with your own test.
-describe port(80), :skip do
-  it { should_not be_listening }
+cookbook_file "#{node['vagrant_path']}/index.html" do
+  source 'index.html'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+describe package('apache2') do
+  it { should be_installed }
+end
+
+describe service('apache2') do
+  it { should be_running }
+  it { should be_enabled }
+end
+
+describe port(80) do
+  it { should be_listening }
 end

@@ -42,6 +42,33 @@ To use this project, ensure your system meets the following requirements:
    vagrant ssh
    ```
 
+## Verifying the Setup
+
+1. **WordPress Access**
+   - Open a browser on your host machine.
+   - Navigate to `http://192.168.33.10` (or the port specified in the `Vagrantfile`).
+
+2. **Login Details**
+   - Default WordPress admin credentials are set during provisioning. Refer to the `wp-config.php.erb` template for details or customize it before provisioning.
+
+## Customization
+
+To customize the setup:
+- Modify the `Vagrantfile` to adjust virtual machine settings (e.g., memory, CPU).
+- Edit the Chef recipes in the `cookbooks/wordpress/recipes` directory.
+- Update templates in the `cookbooks/wordpress/templates` directory for WordPress configuration.
+
+## Troubleshooting
+
+- If the provisioning fails, retry with:
+  ```bash
+  vagrant provision
+  ```
+- To destroy and recreate the VM, use:
+  ```bash
+  vagrant destroy -f
+  vagrant up
+  ```
 ## Unit Tests
 
 ### Location of Unit Tests
@@ -75,33 +102,46 @@ To run the unit tests, follow these steps:
   2. The `wordpress` package is installed.
   3. The bash commands to configure Wordpress are defined and configured correctly.
 
-## Verifying the Setup
+## Integration Testing with Kitchen
 
-1. **WordPress Access**
-   - Open a browser on your host machine.
-   - Navigate to `http://192.168.33.10` (or the port specified in the `Vagrantfile`).
+The project uses Test Kitchen to automate and verify the configuration of the WordPress environment. The following briefly outlines the Kitchen setup and steps to run the integration tests:
 
-2. **Login Details**
-   - Default WordPress admin credentials are set during provisioning. Refer to the `wp-config.php.erb` template for details or customize it before provisioning.
+### Kitchen Configuration
 
-## Customization
+- **Driver**: Vagrant is used as the virtualization provider.
+- **Provisioner**: Chef Zero is employed to apply the Chef cookbooks.
+- **Platforms**: The tests run on Ubuntu 22.04.
+- **Suites**: The default suite applies the `wordpress::default` recipe and runs integration tests located in:
+  - `test/integration/default/wordpress_install_test.rb`
+  - `test/integration/default/wordpress_site_test.rb`
 
-To customize the setup:
-- Modify the `Vagrantfile` to adjust virtual machine settings (e.g., memory, CPU).
-- Edit the Chef recipes in the `cookbooks/wordpress/recipes` directory.
-- Update templates in the `cookbooks/wordpress/templates` directory for WordPress configuration.
+### Steps to Execute Integration Tests
 
-## Troubleshooting
+1. **Create the Test Environment**:
+   Create the virtual machine and apply the configuration:
+   ```bash
+   kitchen create
+   kitchen converge
+   ```
 
-- If the provisioning fails, retry with:
-  ```bash
-  vagrant provision
-  ```
-- To destroy and recreate the VM, use:
-  ```bash
-  vagrant destroy -f
-  vagrant up
-  ```
+2. **Run the Integration Tests**:
+   Execute the tests:
+   ```bash
+   kitchen verify
+   ```
+
+3. **Clean Up**:
+   Destroy the test environment when done:
+   ```bash
+   kitchen destroy
+   ```
+
+4. **Debugging** (if needed):
+   - Connect to the test environment:
+     ```bash
+     kitchen login
+     ```
+   - Check the logs in `.kitchen/logs` for more details.
 
 ## License
 
